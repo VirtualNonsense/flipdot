@@ -31,7 +31,7 @@
 
 
 
-uint const m_size = 56;
+int const m_size = 56;
 
 byte matrix[m_size] = {
         B0000000,
