@@ -26,8 +26,8 @@
 //           GND    GND
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <vector>
-#include <cassert>
+//#include <vector>
+//#include <cassert>
 
 
 
@@ -111,22 +111,22 @@ SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
 // #####################################################################################################################
 // thx to https://forum.arduino.cc/t/how-to-make-a-subarray-of-array/849990/12
 // For vectors
-template <class T>
-std::vector<T> subArray(const std::vector<T> &theArray, size_t startItem, size_t numItems) {
-    assert(startItem < theArray.size());
-    assert(startItem + numItems <= theArray.size());
-    return std::vector<T>(std::begin(theArray) + startItem,
-                          std::begin(theArray) + startItem + numItems);
-}
-
-// For C-style arrays
-template <class T, size_t N>
-std::vector<T> subArray(const T (&theArray)[N], size_t startItem, size_t numItems) {
-    assert(startItem < N);
-    assert(startItem + numItems <= N);
-    return std::vector<T>(std::begin(theArray) + startItem,
-                          std::begin(theArray) + startItem + numItems);
-}
+//template <class T>
+//std::vector<T> subArray(const std::vector<T> &theArray, size_t startItem, size_t numItems) {
+//    assert(startItem < theArray.size());
+//    assert(startItem + numItems <= theArray.size());
+//    return std::vector<T>(std::begin(theArray) + startItem,
+//                          std::begin(theArray) + startItem + numItems);
+//}
+//
+//// For C-style arrays
+//template <class T, size_t N>
+//std::vector<T> subArray(const T (&theArray)[N], size_t startItem, size_t numItems) {
+//    assert(startItem < N);
+//    assert(startItem + numItems <= N);
+//    return std::vector<T>(std::begin(theArray) + startItem,
+//                          std::begin(theArray) + startItem + numItems);
+//}
 
 void show_on_flip_dots(){
     flip_dots.write(data_prefix, 2);
