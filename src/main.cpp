@@ -20,63 +20,142 @@
 // 485+       A
 // 485-       B
 //          3-5V    5V
-//          RX-I    TX
+//          RX-I    D3
 //          TX-O    Not connected
 //           RTS    5V
 //           GND    GND
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include <vector>
+#include <cassert>
 
 
-// numbers font
-byte zero[]  = {B0111110, B0100010, B0100010, B0111110};
-byte one[]   = {B0111110, B0000000, B0000000, B0000000};
-byte two[]   = {B0111010, B0101010, B0101010, B0101110};
-byte three[] = {B0111110, B0101010, B0101010, B0100010};
-byte four[]  = {B0000100, B0111110, B0000100, B0111100};
-byte five[]  = {B0101110, B0101010, B0101010, B0111010};
-byte six[]   = {B0001110, B0001010, B0001010, B0111110};
-byte seven[] = {B0111110, B0100000, B0100000, B0110000};
-byte eight[] = {B0111110, B0101010, B0101010, B0111110};
-byte nine[]  = {B0111110, B0101000, B0101000, B0111000};
 
-// first digit
-byte side_one[]  = {B0000000, B0111110, B0000000};
-byte side_zero[] = {B0000000, B0000000, B0000000};
+uint const m_size = 56;
 
-// brank space
-byte space[] = {B0000000};
+byte matrix[m_size] = {
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        //
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+        B0000000,
+};
 
-byte black[] = {B1111111};
-
+byte old_matrix[m_size];
 
 // data prefix
-byte data_prefix[] = {0x80, 0x83, 0x00};
+byte data_prefix[] = {0x80, 0x83};
+
+byte panels[] = {0x01, 0x00};
 
 // data prefix
 byte data_suffix[] = {0x8F};
 
-SoftwareSerial matrix(D4, D3);
+uint epoch_delay = 500;
+
+SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
+// #####################################################################################################################
+// Functions
+// #####################################################################################################################
+// thx to https://forum.arduino.cc/t/how-to-make-a-subarray-of-array/849990/12
+// For vectors
+template <class T>
+std::vector<T> subArray(const std::vector<T> &theArray, size_t startItem, size_t numItems) {
+    assert(startItem < theArray.size());
+    assert(startItem + numItems <= theArray.size());
+    return std::vector<T>(std::begin(theArray) + startItem,
+                          std::begin(theArray) + startItem + numItems);
+}
+
+// For C-style arrays
+template <class T, size_t N>
+std::vector<T> subArray(const T (&theArray)[N], size_t startItem, size_t numItems) {
+    assert(startItem < N);
+    assert(startItem + numItems <= N);
+    return std::vector<T>(std::begin(theArray) + startItem,
+                          std::begin(theArray) + startItem + numItems);
+}
+
+void show_on_flip_dots(){
+    flip_dots.write(data_prefix, 2);
+    flip_dots.write(panels[0]);
+    for(int i = 0; i<m_size/2; i++){
+        flip_dots.write(matrix[i]);
+    }
+    flip_dots.write(data_suffix, 1);
+
+    flip_dots.write(data_prefix, 2);
+    flip_dots.write(panels[1]);
+    for(int i = m_size/2; i<m_size; i++){
+        flip_dots.write(matrix[i]);
+    }
+    flip_dots.write(data_suffix, 1);
+
+}
+
+// #####################################################################################################################
+// Setup/Loop
+// #####################################################################################################################
 
 void setup() {
 //    Serial.begin(57600);
-    matrix.begin(57600);
+    flip_dots.begin(57600);
 
 }
 
 void loop() {
-    // Display random number
-//    /*
-    int i, j;
-    byte r[] = {0};
-    for (j = 0; j <= 100; j++){
-        matrix.write(data_prefix, 3);
-        for (i = 0; i < 28; i++){
-            r[0] = random(256);
-            matrix.write(r, 1);
-        }
-        matrix.write(data_suffix, 1);
-        delay(50);
-    }
-    delay(5000);
+    show_on_flip_dots();
+    delay(epoch_delay);
 }
