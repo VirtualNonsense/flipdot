@@ -98,7 +98,7 @@ byte old_matrix[m_size];
 // data prefix
 byte data_prefix[] = {0x80, 0x83};
 
-byte panels[] = {0x01, 0x00};
+byte panels[] = {0x00, 0x01};
 
 // data prefix
 byte data_suffix[] = {0x8F};
