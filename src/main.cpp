@@ -109,26 +109,54 @@ SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
-// thx to https://forum.arduino.cc/t/how-to-make-a-subarray-of-array/849990/12
-// For vectors
-//template <class T>
-//std::vector<T> subArray(const std::vector<T> &theArray, size_t startItem, size_t numItems) {
-//    assert(startItem < theArray.size());
-//    assert(startItem + numItems <= theArray.size());
-//    return std::vector<T>(std::begin(theArray) + startItem,
-//                          std::begin(theArray) + startItem + numItems);
-//}
-//
-//// For C-style arrays
-//template <class T, size_t N>
-//std::vector<T> subArray(const T (&theArray)[N], size_t startItem, size_t numItems) {
-//    assert(startItem < N);
-//    assert(startItem + numItems <= N);
-//    return std::vector<T>(std::begin(theArray) + startItem,
-//                          std::begin(theArray) + startItem + numItems);
-//}
 
-void show_on_flip_dots(){
+bool get_value(int x, int y, byte *byte_matrix) {
+    if (x < 0 && y < 0) {
+        return get_value(columns + x, lines + y, byte_matrix);
+    }
+    if (x < 0) {
+
+        return get_value(columns + x, y, byte_matrix);
+    }
+    if (y < 0) {
+        return get_value(x, lines + y, byte_matrix);
+    }
+
+
+    if (y < 7) {
+        return (byte_matrix[x] >> y) & 0b01;
+    }
+    return (byte_matrix[x+columns] >> (y - 7)) & 0b01;
+
+}
+
+void set_value(int x, int y, bool value, byte *byte_matrix) {
+
+    if (x < 0 && y < 0) {
+        return set_value(columns + x, lines + y, value, byte_matrix);
+    }
+    if (x < 0) {
+        return set_value(columns + x, y, value, byte_matrix);
+    }
+    if (y < 0) {
+        return set_value(x, lines + y, value, byte_matrix);
+    }
+
+    if (y < 7) {
+        if (value)
+            byte_matrix[x] = byte_matrix[x] | 1 << y;
+        else
+            byte_matrix[x] = byte_matrix[x] ^ (byte_matrix[x] & 1 << y);
+         return;
+    }
+    if (value) {
+        byte_matrix[x + columns] = byte_matrix[x + columns] | 1 << (y - 7);
+        return;
+    }
+    byte_matrix[x + columns] = byte_matrix[x + columns] ^ (byte_matrix[x + columns] & 1 << (y - 7));
+}
+
+void show_on_flip_dots(byte *byte_matrix) {
     flip_dots.write(data_prefix, 2);
     flip_dots.write(panels[0]);
     for(int i = 0; i<m_size/2; i++){
