@@ -31,7 +31,9 @@
 
 
 
-int const m_size = 56;
+int const lines = 14;
+int const columns = 28;
+int const m_size = 2 * columns;
 
 byte matrix[m_size] = {
         B0000000,
