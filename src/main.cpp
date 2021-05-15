@@ -95,70 +95,14 @@ byte matrix[m_size] = {
         B0000000,
 };
 
-byte new_matrix[m_size] = {
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        //
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-};
+byte new_matrix[m_size];
 
 // data prefix
-byte data_prefix[] = {0x80, 0x83};
+byte data_prefix[] = {0x80, 0x84};
 
 byte panels[] = {0x00, 0x01};
+
+byte refresh[] = {0x80, 0x82, 0x8F};
 
 // data prefix
 byte data_suffix[] = {0x8F};
@@ -235,6 +179,7 @@ void show_on_flip_dots(byte *byte_matrix) {
         flip_dots.write(byte_matrix[i]);
     }
     flip_dots.write(data_suffix, 1);
+    flip_dots.write(refresh, 3);
 
 }
 
@@ -281,27 +226,12 @@ bool b = true;
 void setup() {
     Serial.begin(9600);
     flip_dots.begin(57600);
-//    Serial.println(get_value(0,0, matrix));
-//    Serial.println(get_value(1,0, matrix));
-//    Serial.println(get_value(0,1, matrix));
-//    Serial.println(get_value(2,1, matrix));
-//    Serial.println(get_value(1,2, matrix));
-//    Serial.println(count_neighbours(1,1));
     show_on_flip_dots(matrix);
     delay(epoch_delay);
     Serial.println(count_neighbours(0, 0, matrix));
 }
 
 void loop() {
-//    for (int r = 0; r < 1; r++) {
-//        for (int c = 0; c < columns; c++) {
-//            b = get_value(c-1, r, matrix);
-//            Serial.println(b);
-//            set_value(c, r, !b, matrix);
-//            show_on_flip_dots(matrix);
-//            delay(epoch_delay/16);
-//        }
-//    }
     calc_next_gen();
     std::swap(matrix, new_matrix);
     show_on_flip_dots(matrix);
