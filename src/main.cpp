@@ -26,74 +26,12 @@
 //           GND    GND
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-//#include <vector>
-//#include <cassert>
-
-
 
 int const lines = 14;
 int const columns = 28;
 int const m_size = 2 * columns;
 
-byte matrix[m_size] = {
-        B0000111,
-        B0000000,
-        B0000000,
-        B0010000,
-        B0001000,
-        B0111000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000001,
-        B0000001,
-        B0000001,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        //
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-        B0000000,
-};
+byte matrix[m_size];
 
 byte new_matrix[m_size];
 
@@ -118,7 +56,7 @@ bool get_value(int x, int y, byte *byte_matrix) {
     if (x < 0 && y < 0) {
         return get_value(columns + x, lines + y, byte_matrix);
     }
-    if(x >= columns && y >= lines)
+    if (x >= columns && y >= lines)
         return get_value(x - columns, lines - y, byte_matrix);
     if (x < 0) {
         return get_value(columns + x, y, byte_matrix);
@@ -128,14 +66,14 @@ bool get_value(int x, int y, byte *byte_matrix) {
     if (y < 0) {
         return get_value(x, lines + y, byte_matrix);
     }
-    if(y >= lines)
+    if (y >= lines)
         return get_value(x, y - lines, byte_matrix);
 
 
     if (y < 7) {
         return (byte_matrix[x] >> y) & 0b01;
     }
-    return (byte_matrix[x+columns] >> (y - 7)) & 0b01;
+    return (byte_matrix[x + columns] >> (y - 7)) & 0b01;
 
 }
 
@@ -156,7 +94,7 @@ void set_value(int x, int y, bool value, byte *byte_matrix) {
             byte_matrix[x] = byte_matrix[x] | 1 << y;
         else
             byte_matrix[x] = byte_matrix[x] ^ (byte_matrix[x] & 1 << y);
-         return;
+        return;
     }
     if (value) {
         byte_matrix[x + columns] = byte_matrix[x + columns] | 1 << (y - 7);
