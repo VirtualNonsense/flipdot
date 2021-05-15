@@ -165,6 +165,18 @@ void set_value(int x, int y, bool value, byte *byte_matrix) {
     byte_matrix[x + columns] = byte_matrix[x + columns] ^ (byte_matrix[x + columns] & 1 << (y - 7));
 }
 
+
+void fill_random(double density, byte *byte_matrix) {
+    double r;
+    for (int i = 0; i < m_size; i++) {
+        for (int ii = 0; ii < 7; ii++) {
+            r = random(0, 100) / 100.0;
+            if (r < density)
+                byte_matrix[i] = byte_matrix[i] | 1 << ii;
+        }
+    }
+}
+
 void show_on_flip_dots(byte *byte_matrix) {
     flip_dots.write(data_prefix, 2);
     flip_dots.write(panels[0]);
@@ -226,6 +238,7 @@ bool b = true;
 void setup() {
     Serial.begin(9600);
     flip_dots.begin(57600);
+    fill_random(0.5, matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);
     Serial.println(count_neighbours(0, 0, matrix));
