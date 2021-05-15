@@ -176,7 +176,7 @@ bool b = true;
 void setup() {
     Serial.begin(9600);
     flip_dots.begin(57600);
-    fill_random(0.5, matrix);
+    fill_random(0.33, matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);
     Serial.println(count_neighbours(0, 0, matrix));
