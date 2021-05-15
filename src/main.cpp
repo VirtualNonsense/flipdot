@@ -159,15 +159,15 @@ void set_value(int x, int y, bool value, byte *byte_matrix) {
 void show_on_flip_dots(byte *byte_matrix) {
     flip_dots.write(data_prefix, 2);
     flip_dots.write(panels[0]);
-    for(int i = 0; i<m_size/2; i++){
-        flip_dots.write(matrix[i]);
+    for (int i = 0; i < m_size / 2; i++) {
+        flip_dots.write(byte_matrix[i]);
     }
     flip_dots.write(data_suffix, 1);
 
     flip_dots.write(data_prefix, 2);
     flip_dots.write(panels[1]);
-    for(int i = m_size/2; i<m_size; i++){
-        flip_dots.write(matrix[i]);
+    for (int i = m_size / 2; i < m_size; i++) {
+        flip_dots.write(byte_matrix[i]);
     }
     flip_dots.write(data_suffix, 1);
 
