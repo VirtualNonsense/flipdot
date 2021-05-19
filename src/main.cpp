@@ -154,6 +154,15 @@ bool gol_rules(bool alive, int neighbours) {
     return alive;
 }
 
+bool OCA_maze_rules(bool alive, int neighbours){
+
+    if (neighbours < 1 || neighbours > 5)
+        return false;
+    if (neighbours == 3)
+        return true;
+    return alive;
+}
+
 void calc_next_gen() {
     int n;
     bool alive;
@@ -176,7 +185,7 @@ bool b = true;
 void setup() {
     Serial.begin(9600);
     flip_dots.begin(57600);
-    fill_random(0.33, matrix);
+    fill_random(0.25, matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);
     Serial.println(count_neighbours(0, 0, matrix));
