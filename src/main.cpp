@@ -9,13 +9,13 @@
 // 0x86 - 56 bytes of data / no refresh / C+E
 // ---------------------------------------
 // address or 0xFF for all
-// data ... 1 to nuber of data bytes
+// data ... 1 to number of data bytes
 // 0x8F end
 
 // panel's speed setting: 1-OFF 2-ON 3 - ON
 // panel address : 1 (8 pos dip switch: 1:on 2 -8: off)
 
-// I was sng RS485 Breakout and Duemilanova connected in the following way:
+// The RS485 breakout board is connected in the following way:
 // [Panel]  [RS485]  [Arduino]
 // 485+       A
 // 485-       B
@@ -35,10 +35,10 @@
 // Parameter
 // #####################################################################################################################
 // WiFi stuff - CHANGE FOR YOUR OWN NETWORK!
-const IPAddress ip(192, 168, 47,9);  // IP address that THIS DEVICE should request
+const IPAddress ip(192, 168, 47, 9);  // IP address that THIS DEVICE should request
 const IPAddress gateway(192, 168, 47, 1);  // Your router
 const IPAddress subnet(255, 255, 255, 0);  // Your subnet mask (find it from your router's admin panel)
-const int recv_port = 42069;  // Port that OSC data should be sent to (pick one, put same one in EmotiBit's OSC Config XML file)
+const int recv_port = 42069;  // OTA Port
 
 // matrix setup
 int const lines = 14;
@@ -167,14 +167,14 @@ bool gol_rules(bool alive, int neighbours) {
     return alive;
 }
 
-bool OCA_maze_rules(bool alive, int neighbours){
-
-    if (neighbours < 1 || neighbours > 5)
-        return false;
-    if (neighbours == 3)
-        return true;
-    return alive;
-}
+//bool OCA_maze_rules(bool alive, int neighbours) {
+//
+//    if (neighbours < 1 || neighbours > 5)
+//        return false;
+//    if (neighbours == 3)
+//        return true;
+//    return alive;
+//}
 
 void calc_next_gen() {
     int n;
@@ -193,9 +193,10 @@ void calc_next_gen() {
 // #####################################################################################################################
 // Setup/Loop
 // #####################################################################################################################
-bool b = true;
 
 void setup() {
+    // #################################################################################################################
+    // system setup
     Serial.begin(9600);
     flip_dots.begin(57600);
     Serial.println("setting up wifi!");
@@ -215,29 +216,29 @@ void setup() {
     Serial.println("Setting up wireless firmware updates");
     // Wireless OTA updating? On an ARDUINO?! It's more likely than you think!
     ArduinoOTA.onStart([]() {
-                String type;
-                if (ArduinoOTA.getCommand() == U_FLASH)
-                    type = "sketch";
-                else // U_SPIFFS
-                    type = "filesystem";
+        String type;
+        if (ArduinoOTA.getCommand() == U_FLASH)
+            type = "sketch";
+        else // U_SPIFFS
+            type = "filesystem";
 
-                // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-                Serial.println("Start updating " + type);
-            });
+        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+        Serial.println("Start updating " + type);
+    });
     ArduinoOTA.onEnd([]() {
-                Serial.println("\nEnd");
-            });
+        Serial.println("\nEnd");
+    });
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-                Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-            });
+        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    });
     ArduinoOTA.onError([](ota_error_t error) {
-                Serial.printf("Error[%u]: ", error);
-                if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-                else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-                else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-                else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-                else if (error == OTA_END_ERROR) Serial.println("End Failed");
-            });
+        Serial.printf("Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+        else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    });
 
     ArduinoOTA.begin();
     Serial.println("setup finished!");
@@ -245,6 +246,9 @@ void setup() {
     Serial.println("Ready for WiFi OTA updates");
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+    // #################################################################################################################
+    // Matrix setup
+    fill_random(.22, matrix);
 }
 
 void loop() {
