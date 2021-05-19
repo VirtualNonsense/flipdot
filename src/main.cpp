@@ -227,8 +227,6 @@ void website() {
     client.println(""); //  do not forget this one
     client.println("<!DOCTYPE HTML>");
     client.println("<html>");
-
-    client.println("<br><br>");
     client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
     client.println("</html>");
 
