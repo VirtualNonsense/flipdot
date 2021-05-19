@@ -35,7 +35,7 @@
 // Parameter
 // #####################################################################################################################
 // WiFi stuff - CHANGE FOR YOUR OWN NETWORK!
-const IPAddress ip(192, 168, 47,4);  // IP address that THIS DEVICE should request
+const IPAddress ip(192, 168, 47,9);  // IP address that THIS DEVICE should request
 const IPAddress gateway(192, 168, 47, 1);  // Your router
 const IPAddress subnet(255, 255, 255, 0);  // Your subnet mask (find it from your router's admin panel)
 const int recv_port = 42069;  // Port that OSC data should be sent to (pick one, put same one in EmotiBit's OSC Config XML file)
@@ -202,12 +202,15 @@ void setup() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     WiFi.config(ip, gateway, subnet);
+    WiFi.hostname("flip dot matrix");
     while (WiFi.waitForConnectResult() != WL_CONNECTED) {
         Serial.println("Connection Failed! Rebooting...");
         delay(5000);
         ESP.restart();
     }
     Serial.println("Wifi setup success!");
+    ArduinoOTA.setHostname("Flip-dot-matrix");
+    ArduinoOTA.setPort(recv_port);
 
     Serial.println("Setting up wireless firmware updates");
     // Wireless OTA updating? On an ARDUINO?! It's more likely than you think!
@@ -245,6 +248,7 @@ void setup() {
 }
 
 void loop() {
+    ArduinoOTA.handle();
     calc_next_gen();
     std::swap(matrix, new_matrix);
     show_on_flip_dots(matrix);
