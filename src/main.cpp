@@ -60,6 +60,8 @@ byte data_suffix[] = {0x8F};
 
 uint epoch_delay = 100;
 
+int enableMatrixComPin = D5;
+
 SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
 // #####################################################################################################################
 // Functions
@@ -250,6 +252,8 @@ void setup() {
     // #################################################################################################################
     // Matrix setup
     fill_random(.22, matrix);
+    pinMode(enableMatrixComPin, OUTPUT);
+    digitalWrite(enableMatrixComPin, HIGH);
 }
 
 void loop() {
