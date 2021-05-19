@@ -26,7 +26,21 @@
 //           GND    GND
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include <ESP8266WiFi.h>
+#include <ArduinoOTA.h>
+#include "secrets.h"
 
+
+// #####################################################################################################################
+// Parameter
+// #####################################################################################################################
+// WiFi stuff - CHANGE FOR YOUR OWN NETWORK!
+const IPAddress ip(192, 168, 47,4);  // IP address that THIS DEVICE should request
+const IPAddress gateway(192, 168, 47, 1);  // Your router
+const IPAddress subnet(255, 255, 255, 0);  // Your subnet mask (find it from your router's admin panel)
+const int recv_port = 42069;  // Port that OSC data should be sent to (pick one, put same one in EmotiBit's OSC Config XML file)
+
+// matrix setup
 int const lines = 14;
 int const columns = 28;
 int const m_size = 2 * columns;
@@ -35,7 +49,6 @@ byte matrix[m_size];
 
 byte new_matrix[m_size];
 
-// data prefix
 byte data_prefix[] = {0x80, 0x84};
 
 byte panels[] = {0x00, 0x01};
@@ -185,10 +198,50 @@ bool b = true;
 void setup() {
     Serial.begin(9600);
     flip_dots.begin(57600);
-    fill_random(0.25, matrix);
-    show_on_flip_dots(matrix);
-    delay(epoch_delay);
-    Serial.println(count_neighbours(0, 0, matrix));
+    Serial.println("setting up wifi!");
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, password);
+    WiFi.config(ip, gateway, subnet);
+    while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+        Serial.println("Connection Failed! Rebooting...");
+        delay(5000);
+        ESP.restart();
+    }
+    Serial.println("Wifi setup success!");
+
+    Serial.println("Setting up wireless firmware updates");
+    // Wireless OTA updating? On an ARDUINO?! It's more likely than you think!
+    ArduinoOTA.onStart([]() {
+                String type;
+                if (ArduinoOTA.getCommand() == U_FLASH)
+                    type = "sketch";
+                else // U_SPIFFS
+                    type = "filesystem";
+
+                // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+                Serial.println("Start updating " + type);
+            });
+    ArduinoOTA.onEnd([]() {
+                Serial.println("\nEnd");
+            });
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+                Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+            });
+    ArduinoOTA.onError([](ota_error_t error) {
+                Serial.printf("Error[%u]: ", error);
+                if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+                else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+                else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+                else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+                else if (error == OTA_END_ERROR) Serial.println("End Failed");
+            });
+
+    ArduinoOTA.begin();
+    Serial.println("setup finished!");
+
+    Serial.println("Ready for WiFi OTA updates");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
 }
 
 void loop() {

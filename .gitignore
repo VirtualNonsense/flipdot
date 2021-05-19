@@ -1,6 +1,6 @@
 .pio
 CMakeListsPrivate.txt
-cmake-build-*/ 
+cmake-build-*/ ;
 
 # Created by https://www.toptal.com/developers/gitignore/api/clion+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=clion+all
@@ -95,3 +95,4 @@ modules.xml
 .idea/sonarlint
 
 # End of https://www.toptal.com/developers/gitignore/api/clion+all
+/src/secrets.h
