@@ -38,7 +38,9 @@
 const IPAddress ip(192, 168, 47, 9);  // IP address that THIS DEVICE should request
 const IPAddress gateway(192, 168, 47, 1);  // Your router
 const IPAddress subnet(255, 255, 255, 0);  // Your subnet mask (find it from your router's admin panel)
-const int recv_port = 42069;  // OTA Port
+const int ota_port = 42069;  // OTA Port
+const int interface_port = 420;
+WiFiServer server(interface_port);
 
 // matrix setup
 int const lines = 14;
@@ -192,6 +194,49 @@ void calc_next_gen() {
 }
 
 
+void website() {
+    // Check if a client has connected
+    WiFiClient client = server.available();
+    if (!client) {
+        return;
+    }
+
+    // Wait until the client sends some data
+    Serial.println("new client");
+    while (!client.available()) {
+        delay(1);
+    }
+
+    // Read the first line of the request
+    String request = client.readStringUntil('\r');
+    Serial.println(request);
+    client.flush();
+
+    // Match the request
+
+    if (request.indexOf("/reset") != -1) {
+        fill_random(0.2, matrix);
+    }
+
+    //Set ledPin according to the request
+    //digitalWrite(ledPin, value);
+
+    // Return the response
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: text/html");
+    client.println(""); //  do not forget this one
+    client.println("<!DOCTYPE HTML>");
+    client.println("<html>");
+
+    client.println("<br><br>");
+    client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
+    client.println("</html>");
+
+    delay(1);
+    Serial.println("Client disconnected");
+    Serial.println("");
+}
+
 // #####################################################################################################################
 // Setup/Loop
 // #####################################################################################################################
@@ -213,7 +258,7 @@ void setup() {
     }
     Serial.println("Wifi setup success!");
     ArduinoOTA.setHostname("Flip-dot-matrix");
-    ArduinoOTA.setPort(recv_port);
+    ArduinoOTA.setPort(ota_port);
     ArduinoOTA.setPassword(otaPassword);
 
     Serial.println("Setting up wireless firmware updates");
@@ -249,9 +294,9 @@ void setup() {
     Serial.println("Ready for WiFi OTA updates");
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+    server.begin();
     // #################################################################################################################
     // Matrix setup
-    fill_random(.22, matrix);
     pinMode(enableMatrixComPin, OUTPUT);
     digitalWrite(enableMatrixComPin, HIGH);
 }
@@ -262,4 +307,5 @@ void loop() {
     std::swap(matrix, new_matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);
+    website();
 }
