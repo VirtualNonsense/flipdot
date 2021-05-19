@@ -212,6 +212,7 @@ void setup() {
     Serial.println("Wifi setup success!");
     ArduinoOTA.setHostname("Flip-dot-matrix");
     ArduinoOTA.setPort(recv_port);
+    ArduinoOTA.setPassword(otaPassword);
 
     Serial.println("Setting up wireless firmware updates");
     // Wireless OTA updating? On an ARDUINO?! It's more likely than you think!
