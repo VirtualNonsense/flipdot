@@ -66,6 +66,8 @@ uint epoch_delay = 100;
 int enableMatrixComPin = D5;
 
 SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
+
+rule rule_set = game_of_life;
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
@@ -118,6 +120,15 @@ void website() {
         fill_random(0.2, m_size, matrix);
     }
 
+    if (request.indexOf("/change_mode") != -1) {
+        if(rule_set == game_of_life){
+            rule_set = oca_maze;
+        }
+        else{
+            rule_set = game_of_life;
+        }
+    }
+
     //Set ledPin according to the request
     //digitalWrite(ledPin, value);
 
@@ -128,6 +139,7 @@ void website() {
     client.println("<!DOCTYPE HTML>");
     client.println("<html>");
     client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
+    client.println("Click <a href=\"/change_mode\">here</a> to change the rule set<br>");
     client.println("</html>");
 
     delay(1);
@@ -201,7 +213,7 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
-    calc_next_gen(matrix, new_matrix, columns, lines);
+    calc_next_gen(matrix, new_matrix, rule_set, columns, lines);
     std::swap(matrix, new_matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);

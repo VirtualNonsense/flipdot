@@ -8,10 +8,15 @@
 #endif //FLIPDOT_GAME_OF_LIFE_H
 #include "flipdot.h"
 
+enum rule{
+    game_of_life,
+    oca_maze,
+};
+
 int count_neighbours(int x, int y, int columns, int lines, byte *byte_matrix);
 
 bool gol_rules(bool alive, int neighbours);
 
 bool oca_maze_rules(bool alive, int neighbours);
 
-void calc_next_gen(byte *byte_matrix, byte *new_byte_matrix, int columns, int lines);
+void calc_next_gen(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines);
