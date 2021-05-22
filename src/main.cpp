@@ -221,7 +221,7 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
-    calc_next_gen(matrix, new_matrix, rule_set, columns, lines);
+    calculate_next_epoch(matrix, new_matrix, rule_set, columns, lines);
     std::swap(matrix, new_matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);

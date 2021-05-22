@@ -19,4 +19,4 @@ bool gol_rules(bool alive, int neighbours);
 
 bool oca_maze_rules(bool alive, int neighbours);
 
-void calc_next_gen(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines);
+void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines);
