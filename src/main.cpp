@@ -97,6 +97,7 @@ void show_on_flip_dots(byte *byte_matrix) {
 
 
 void website() {
+
     // Check if a client has connected
     WiFiClient client = server.available();
     if (!client) {
@@ -121,12 +122,17 @@ void website() {
     }
 
     if (request.indexOf("/change_mode") != -1) {
-        if(rule_set == game_of_life){
-            rule_set = oca_maze;
-        }
-        else{
-            rule_set = game_of_life;
-        }
+        rule_set = static_cast<rule>((rule_set + 1) % rule_count);
+    }
+    String game_mode;
+    switch (rule_set) {
+
+        case game_of_life:
+            game_mode = "game of life";
+            break;
+        case oca_maze:
+            game_mode = "oca maze";
+            break;
     }
 
     //Set ledPin according to the request
@@ -139,7 +145,9 @@ void website() {
     client.println("<!DOCTYPE HTML>");
     client.println("<html>");
     client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
-    client.println("Click <a href=\"/change_mode\">here</a> to change the rule set<br>");
+    client.print("Click <a href=\"/change_mode\">here</a> to change the rule set. current mode: ");
+    client.print(game_mode);
+    client.println("<br>");
     client.println("</html>");
 
     delay(1);

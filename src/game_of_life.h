@@ -7,7 +7,7 @@
 
 #endif //FLIPDOT_GAME_OF_LIFE_H
 #include "flipdot.h"
-
+const int rule_count = 2;
 enum rule{
     game_of_life,
     oca_maze,
