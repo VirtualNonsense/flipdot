@@ -10,4 +10,5 @@
 
 bool get_value(int x, int y, int columns, int lines, byte *byte_matrix);
 void set_value(int x, int y, bool value, int columns, int lines, byte *byte_matrix);
+void fill_random(double density, int m_size, byte *byte_matrix);
 

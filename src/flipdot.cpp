@@ -53,3 +53,14 @@ void set_value(int x, int y, bool value, int columns, int lines, byte *byte_matr
     }
     byte_matrix[x + columns] = byte_matrix[x + columns] ^ (byte_matrix[x + columns] & 1 << (y - 7));
 }
+
+void fill_random(double density, int m_size, byte *byte_matrix) {
+    double r;
+    for (int i = 0; i < m_size; i++) {
+        for (int ii = 0; ii < 7; ii++) {
+            r = random(0, 100) / 100.0;
+            if (r < density)
+                byte_matrix[i] = byte_matrix[i] | 1 << ii;
+        }
+    }
+}
