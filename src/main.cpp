@@ -122,7 +122,7 @@ void website() {
     }
 
     if (request.indexOf("/change_mode") != -1) {
-        rule_set = static_cast<rule>((rule_set + 1) % rule_count);
+        rule_set = static_cast<rule>((rule_set + 1) % RULE_COUNT);
     }
     String game_mode;
     switch (rule_set) {
