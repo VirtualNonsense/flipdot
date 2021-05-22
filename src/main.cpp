@@ -29,6 +29,7 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoOTA.h>
 #include "secrets.h"
+#include "game_of_life.h"
 
 
 // #####################################################################################################################
@@ -69,56 +70,7 @@ SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
 // Functions
 // #####################################################################################################################
 
-bool get_value(int x, int y, byte *byte_matrix) {
-    if (x < 0 && y < 0) {
-        return get_value(columns + x, lines + y, byte_matrix);
-    }
-    if (x >= columns && y >= lines)
-        return get_value(x - columns, lines - y, byte_matrix);
-    if (x < 0) {
-        return get_value(columns + x, y, byte_matrix);
-    }
-    if (x >= columns)
-        return get_value(x - columns, y, byte_matrix);
-    if (y < 0) {
-        return get_value(x, lines + y, byte_matrix);
-    }
-    if (y >= lines)
-        return get_value(x, y - lines, byte_matrix);
 
-
-    if (y < 7) {
-        return (byte_matrix[x] >> y) & 0b01;
-    }
-    return (byte_matrix[x + columns] >> (y - 7)) & 0b01;
-
-}
-
-void set_value(int x, int y, bool value, byte *byte_matrix) {
-
-    if (x < 0 && y < 0) {
-        return set_value(columns + x, lines + y, value, byte_matrix);
-    }
-    if (x < 0) {
-        return set_value(columns + x, y, value, byte_matrix);
-    }
-    if (y < 0) {
-        return set_value(x, lines + y, value, byte_matrix);
-    }
-
-    if (y < 7) {
-        if (value)
-            byte_matrix[x] = byte_matrix[x] | 1 << y;
-        else
-            byte_matrix[x] = byte_matrix[x] ^ (byte_matrix[x] & 1 << y);
-        return;
-    }
-    if (value) {
-        byte_matrix[x + columns] = byte_matrix[x + columns] | 1 << (y - 7);
-        return;
-    }
-    byte_matrix[x + columns] = byte_matrix[x + columns] ^ (byte_matrix[x + columns] & 1 << (y - 7));
-}
 
 
 void fill_random(double density, byte *byte_matrix) {
@@ -148,49 +100,6 @@ void show_on_flip_dots(byte *byte_matrix) {
     flip_dots.write(data_suffix, 1);
     flip_dots.write(refresh, 3);
 
-}
-
-int count_neighbours(int x, int y, byte *byte_matrix) {
-    int neighbours = 0;
-    for (int r = y - 1; r < y + 2; r++) {
-        for (int c = x - 1; c < x + 2; c++) {
-            if (c == x && r == y)
-                continue;
-            if (get_value(c, r, byte_matrix))
-                neighbours++;
-        }
-    }
-    return neighbours;
-}
-
-bool gol_rules(bool alive, int neighbours) {
-    if (neighbours < 2 || neighbours > 3)
-        return false;
-    if (neighbours == 3)
-        return true;
-    return alive;
-}
-
-//bool OCA_maze_rules(bool alive, int neighbours) {
-//
-//    if (neighbours < 1 || neighbours > 5)
-//        return false;
-//    if (neighbours == 3)
-//        return true;
-//    return alive;
-//}
-
-void calc_next_gen() {
-    int n;
-    bool alive;
-    for (int c = 0; c < columns; c++) {
-        for (int r = 0; r < lines; r++) {
-            alive = get_value(c, r, matrix);
-            n = count_neighbours(c, r, matrix);
-            alive = gol_rules(alive, n);
-            set_value(c, r, alive, new_matrix);
-        }
-    }
 }
 
 
@@ -301,7 +210,7 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
-    calc_next_gen();
+    calc_next_gen(matrix, new_matrix, columns, lines);
     std::swap(matrix, new_matrix);
     show_on_flip_dots(matrix);
     delay(epoch_delay);

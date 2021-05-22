@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/secrets.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/secrets.h src/game_of_life.h src/game_of_life.cpp src/flipdot.h src/flipdot.cpp)
