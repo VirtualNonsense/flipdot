@@ -133,6 +133,9 @@ void website() {
         case oca_maze:
             game_mode = "oca maze";
             break;
+        case oca_mazectric:
+            game_mode = "oca mazectric";
+            break;
     }
 
     //Set ledPin according to the request

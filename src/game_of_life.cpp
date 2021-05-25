@@ -34,6 +34,15 @@ bool oca_maze_rules(bool alive, int neighbours) {
     return alive;
 }
 
+bool oca_mazectric_rules(bool alive, int neighbours) {
+
+    if (neighbours < 1 || neighbours > 4)
+        return false;
+    if (neighbours == 3)
+        return true;
+    return alive;
+}
+
 void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines) {
     int n;
     bool alive;
@@ -47,6 +56,9 @@ void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, i
                     break;
                 case oca_maze:
                     alive = oca_maze_rules(alive, n);
+                    break;
+                case oca_mazectric:
+                    alive = oca_mazectric_rules(alive, n);
                     break;
             }
             set_value(c, r, alive, columns, lines, new_byte_matrix);
