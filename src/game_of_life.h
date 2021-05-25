@@ -7,11 +7,22 @@
 
 #endif //FLIPDOT_GAME_OF_LIFE_H
 #include "flipdot.h"
-const int RULE_COUNT = 3;
+const int RULE_COUNT = 4;
 enum rule{
     game_of_life,
     oca_maze,
     oca_mazectric,
+    day_and_night,
+};
+
+
+const int s_day_and_night_count = 4;
+const int s_day_and_night[] = {
+        3,6,7,8
+};
+const int b_day_and_night_count = 5;
+const int b_day_and_night[] = {
+        3,4,6,7,8
 };
 
 int count_neighbours(int x, int y, int columns, int lines, byte *byte_matrix);
