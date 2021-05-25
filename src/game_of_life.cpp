@@ -4,6 +4,7 @@
 #include "game_of_life.h"
 
 
+
 int count_neighbours(int x, int y, int columns, int lines, byte *byte_matrix) {
     int neighbours = 0;
     for (int r = y - 1; r < y + 2; r++) {
@@ -56,6 +57,19 @@ bool generic_rules(bool alive, int neighbours, int b_count, int s_count, const i
     }
     return false;
 }
+
+//######################################################################################################################
+// RULES
+//######################################################################################################################
+const int s_day_and_night_count = 4;
+const int s_day_and_night[] = {
+        3,6,7,8
+};
+const int b_day_and_night_count = 5;
+const int b_day_and_night[] = {
+        3,4,6,7,8
+};
+
 
 void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines) {
     int n;
