@@ -43,57 +43,28 @@ const int ota_port = 42069;  // OTA Port
 const int interface_port = 420;
 WiFiServer server(interface_port);
 
-// matrix setup
+// frontBuffer setup
 int const lines = 14;
 int const columns = 28;
 int const m_size = 2 * columns;
 
-byte matrix[m_size];
+byte frontBuffer[m_size];
 
-byte new_matrix[m_size];
-
-byte data_prefix[] = {0x80, 0x84};
-
-byte panels[] = {0x00, 0x01};
-
-byte refresh[] = {0x80, 0x82, 0x8F};
-
-// data prefix
-byte data_suffix[] = {0x8F};
+byte backBuffer[m_size];
 
 uint epoch_delay = 100;
 
 int enableMatrixComPin = D5;
 
 SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
+FlipDotMatrix matrix(lines / 2, columns, lines, columns, frontBuffer, backBuffer, &flip_dots);
 
 rule rule_set = game_of_life;
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
-
-
-
-
-
-
-void show_on_flip_dots(byte *byte_matrix) {
-    flip_dots.write(data_prefix, 2);
-    flip_dots.write(panels[0]);
-    for (int i = 0; i < m_size / 2; i++) {
-        flip_dots.write(byte_matrix[i]);
-    }
-    flip_dots.write(data_suffix, 1);
-
-    flip_dots.write(data_prefix, 2);
-    flip_dots.write(panels[1]);
-    for (int i = m_size / 2; i < m_size; i++) {
-        flip_dots.write(byte_matrix[i]);
-    }
-    flip_dots.write(data_suffix, 1);
-    flip_dots.write(refresh, 3);
-
-}
+int x = 0;
+int y = 0;
 
 
 void website() {
@@ -118,7 +89,7 @@ void website() {
     // Match the request
 
     if (request.indexOf("/reset") != -1) {
-        fill_random(0.2, m_size, matrix);
+        fill_random(0.2, &matrix);
     }
 
     if (request.indexOf("/change_mode") != -1) {
@@ -227,9 +198,9 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
-    calculate_next_epoch(matrix, new_matrix, rule_set, columns, lines);
-    std::swap(matrix, new_matrix);
-    show_on_flip_dots(matrix);
-    delay(epoch_delay);
     website();
+    calculate_next_epoch(&matrix, rule_set);
+    matrix.swapBuffer();
+    matrix.updateMatrix();
+    delay(epoch_delay);
 }
