@@ -63,9 +63,6 @@ rule rule_set = game_of_life;
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
-int x = 0;
-int y = 0;
-
 
 void website() {
 
@@ -87,7 +84,6 @@ void website() {
     client.flush();
 
     // Match the request
-
     if (request.indexOf("/reset") != -1) {
         fill_random(0.2, &matrix);
     }
@@ -157,7 +153,7 @@ void setup() {
     ArduinoOTA.setPassword(otaPassword);
 
     Serial.println("Setting up wireless firmware updates");
-    // Wireless OTA updating? On an ARDUINO?! It's more likely than you think!
+    // Wireless OTA updating
     ArduinoOTA.onStart([]() {
         String type;
         if (ArduinoOTA.getCommand() == U_FLASH)
