@@ -31,7 +31,7 @@ bool get_value(int x, int y, int columns, int lines, byte *byte_matrix) {
 void set_value(int x, int y, bool value, int columns, int lines, byte *byte_matrix) {
 
     if (x < 0 && y < 0) {
-        return set_value(columns + x, lines + y, columns, lines, value, byte_matrix);
+        return set_value(columns + x, lines + y, value, columns, lines, byte_matrix);
     }
     if (x < 0) {
         return set_value(columns + x, y, value, columns, lines, byte_matrix);
