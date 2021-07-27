@@ -86,6 +86,7 @@ void website() {
     // Match the request
     if (request.indexOf("/reset") != -1) {
         fill_random(0.2, &matrix);
+        matrix.updateFrontBuffer();
     }
 
     if (request.indexOf("/change_mode") != -1) {
