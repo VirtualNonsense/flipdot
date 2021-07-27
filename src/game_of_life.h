@@ -17,6 +17,6 @@ enum rule{
 
 
 
-int count_neighbours(int x, int y, int columns, int lines, byte *byte_matrix);
+int count_neighbours(int x, int y, FlipDotMatrix *matrix);
 
-void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines);
+void calculate_next_epoch(FlipDotMatrix *matrix, rule rule);

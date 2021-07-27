@@ -5,13 +5,13 @@
 
 
 
-int count_neighbours(int x, int y, int columns, int lines, byte *byte_matrix) {
+int count_neighbours(int x, int y, FlipDotMatrix *matrix) {
     int neighbours = 0;
     for (int r = y - 1; r < y + 2; r++) {
         for (int c = x - 1; c < x + 2; c++) {
             if (c == x && r == y)
                 continue;
-            if (get_value(c, r, columns, lines, byte_matrix))
+            if (matrix->getValue(c, r, FRONT))
                 neighbours++;
         }
     }
@@ -71,13 +71,13 @@ const int b_day_and_night[] = {
 };
 
 
-void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, int columns, int lines) {
+void calculate_next_epoch(FlipDotMatrix *matrix, rule rule){
     int n;
     bool alive;
-    for (int c = 0; c < columns; c++) {
-        for (int r = 0; r < lines; r++) {
-            alive = get_value(c, r, columns, lines, byte_matrix);
-            n = count_neighbours(c, r, columns, lines, byte_matrix);
+    for (int c = 0; c < matrix->getWidth(); c++) {
+        for (int r = 0; r < matrix->getHeight(); r++) {
+            alive = matrix->getValue(c, r, FRONT);
+            n = count_neighbours(c, r, matrix);
             switch (rule) {
                 case game_of_life:
                     alive = gol_rules(alive, n);
@@ -92,7 +92,7 @@ void calculate_next_epoch(byte *byte_matrix, byte *new_byte_matrix, rule rule, i
                     alive = generic_rules(alive, n, b_day_and_night_count, s_day_and_night_count, b_day_and_night, s_day_and_night);
                     break;
             }
-            set_value(c, r, alive, columns, lines, new_byte_matrix);
+            matrix->setValue(c, r, alive);
         }
     }
 }
