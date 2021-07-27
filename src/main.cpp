@@ -1,29 +1,3 @@
-// https://medium.com/coinmonks/flip-dot-display-with-arduino-and-rs485-shield-ca2cec1b971a
-// 0x80 beginning
-//___________________
-// 0x81 - 112 bytes / no refresh / C+3E
-// 0x82 - refresh
-// 0x83 - 28 bytes of data / refresh / 2C
-// 0x84 - 28 bytes of data / no refresh / 2C
-// 0x85 - 56 bytes of data / refresh / C+E
-// 0x86 - 56 bytes of data / no refresh / C+E
-// ---------------------------------------
-// address or 0xFF for all
-// data ... 1 to number of data bytes
-// 0x8F end
-
-// panel's speed setting: 1-OFF 2-ON 3 - ON
-// panel address : 1 (8 pos dip switch: 1:on 2 -8: off)
-
-// The RS485 breakout board is connected in the following way:
-// [Panel]  [RS485]  [Arduino]
-// 485+       A
-// 485-       B
-//          3-5V    5V
-//          RX-I    D3
-//          TX-O    Not connected
-//           RTS    5V
-//           GND    GND
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <ESP8266WiFi.h>
@@ -60,6 +34,14 @@ SoftwareSerial flip_dots(D4, D3); // rx (not used), tx
 FlipDotMatrix matrix(lines / 2, columns, lines, columns, frontBuffer, backBuffer, &flip_dots);
 
 rule rule_set = game_of_life;
+
+int MODE_COUNT = 2;
+enum DeviceMode {
+    GameOfLife,
+    Clock
+};
+
+DeviceMode mode = GameOfLife;
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
@@ -89,23 +71,37 @@ void website() {
         matrix.updateFrontBuffer();
     }
 
-    if (request.indexOf("/change_mode") != -1) {
+    if (request.indexOf("/change_gol_mode") != -1) {
         rule_set = static_cast<rule>((rule_set + 1) % RULE_COUNT);
     }
-    String game_mode;
+
+    if (request.indexOf("/change_mode") != -1) {
+        mode = static_cast<DeviceMode>((mode + 1) % MODE_COUNT);
+    }
+    String game_mode_string;
     switch (rule_set) {
 
         case game_of_life:
-            game_mode = "game of life";
+            game_mode_string = "game of life";
             break;
         case oca_maze:
-            game_mode = "oca maze";
+            game_mode_string = "oca maze";
             break;
         case oca_mazectric:
-            game_mode = "oca mazectric";
+            game_mode_string = "oca mazectric";
             break;
         case day_and_night:
-            game_mode = "day and night";
+            game_mode_string = "day and night";
+            break;
+    }
+
+    String mode_string;
+    switch (mode) {
+        case GameOfLife:
+            mode_string = "Game of life";
+            break;
+        case Clock:
+            mode_string = "Clock";
             break;
     }
 
@@ -119,8 +115,11 @@ void website() {
     client.println("<!DOCTYPE HTML>");
     client.println("<html>");
     client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
-    client.print("Click <a href=\"/change_mode\">here</a> to change the rule set. current mode: ");
-    client.print(game_mode);
+    client.print("Click <a href=\"/change_gol_mode\">here</a> to change the rule set. current mode: ");
+    client.print(game_mode_string);
+    client.println("<br>");
+    client.print("Click <a href=\"/change_mode\">here</a> to change the device mode. current mode: ");
+    client.print(mode_string);
     client.println("<br>");
     client.println("</html>");
 
@@ -196,8 +195,15 @@ void setup() {
 void loop() {
     ArduinoOTA.handle();
     website();
-    calculate_next_epoch(&matrix, rule_set);
-    matrix.swapBuffer();
-    matrix.updateMatrix();
+    switch (mode) {
+        case GameOfLife:
+            calculate_next_epoch(&matrix, rule_set);
+            matrix.swapBuffer();
+            matrix.updateMatrix();
+            break;
+
+        case Clock:
+            break;
+    }
     delay(epoch_delay);
 }
