@@ -2,6 +2,7 @@
 // Created by Andre on 22/05/2021.
 //
 #include "flipdot.h"
+#include <cstring>
 
 bool get_value(int x, int y, int columns, int lines, byte *byte_matrix) {
     if (x < 0 && y < 0) {
@@ -154,8 +155,6 @@ void FlipDotMatrix::updateMatrix() {
         return;
     }
     matrixUpDated = false;
-    Serial.println("swapping buffers");
-    swapBuffer();
     Serial.println("writing to matrix");
     dotMatrix->write(data_prefix, 2);
     dotMatrix->write(panels[0]);
@@ -172,7 +171,6 @@ void FlipDotMatrix::updateMatrix() {
     dotMatrix->write(data_suffix, 1);
     dotMatrix->write(refresh, 3);
     Serial.println("flushing back buffer");
-    flushBackBuffer();
 }
 
 void FlipDotMatrix::flushBackBuffer() {
@@ -181,3 +179,6 @@ void FlipDotMatrix::flushBackBuffer() {
     }
 }
 
+void FlipDotMatrix::updateFrontBuffer() {
+    std::memcpy(frontBuffer, backBuffer, 2 * matrixWidth);
+}

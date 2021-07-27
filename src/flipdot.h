@@ -44,6 +44,10 @@ public:
 
     void swapBuffer();
 
+    void updateFrontBuffer();
+
+    void flushBackBuffer();
+
     void updateMatrix();
 
 private:
@@ -76,6 +80,5 @@ private:
     /// this will be edited using the setValue function.
     byte *backBuffer;
 
-    void flushBackBuffer();
 
 };
