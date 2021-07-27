@@ -69,28 +69,42 @@ void fill_random(double density, int m_size, byte *byte_matrix) {
 // FlipDotMatrix
 // #####################################################################################################################
 bool FlipDotMatrix::getValue(int x, int y) {
+
+    return getValue(x, y, BACK);
+}
+
+bool FlipDotMatrix::getValue(int x, int y, MatrixBuffer buffer) {
     if (x < 0 && y < 0) {
-        return getValue(matrixWidth + x, matrixHeight + y);
+        return getValue(matrixWidth + x, matrixHeight + y, buffer);
     }
     if (x >= matrixWidth && y >= matrixHeight)
-        return getValue(x - matrixWidth, matrixHeight - y);
+        return getValue(x - matrixWidth, matrixHeight - y, buffer);
     if (x < 0) {
-        return getValue(matrixWidth + x, y);
+        return getValue(matrixWidth + x, y, buffer);
     }
     if (x >= matrixWidth)
-        return getValue(x - matrixWidth, y);
+        return getValue(x - matrixWidth, y, buffer);
     if (y < 0) {
-        return getValue(x, matrixHeight + y);
+        return getValue(x, matrixHeight + y, buffer);
     }
     if (y >= matrixHeight)
-        return getValue(x, y - matrixHeight);
+        return getValue(x, y - matrixHeight, buffer);
 
-
-    if (y < 7) {
-        return (backBuffer[x] >> y) & 0b01;
+    switch (buffer) {
+        case FRONT:
+            if (y < 7) {
+                return (frontBuffer[x] >> y) & 0b01;
+            }
+            return (frontBuffer[x + matrixWidth] >> (y - 7)) & 0b01;
+        case BACK:
+            if (y < 7) {
+                return (backBuffer[x] >> y) & 0b01;
+            }
+            return (backBuffer[x + matrixWidth] >> (y - 7)) & 0b01;
     }
-    return (backBuffer[x + matrixWidth] >> (y - 7)) & 0b01;
+
 }
+
 
 int FlipDotMatrix::getWidth() {
     return matrixWidth;
@@ -149,9 +163,8 @@ void FlipDotMatrix::swapBuffer() {
 }
 
 
-
 void FlipDotMatrix::updateMatrix() {
-    if (!matrixUpDated){
+    if (!matrixUpDated) {
         return;
     }
     matrixUpDated = false;
@@ -165,7 +178,7 @@ void FlipDotMatrix::updateMatrix() {
 
     dotMatrix->write(data_prefix, 2);
     dotMatrix->write(panels[1]);
-    for (int i = matrixWidth; i < 2*matrixWidth; i++) {
+    for (int i = matrixWidth; i < 2 * matrixWidth; i++) {
         dotMatrix->write(frontBuffer[i]);
     }
     dotMatrix->write(data_suffix, 1);
@@ -182,3 +195,4 @@ void FlipDotMatrix::flushBackBuffer() {
 void FlipDotMatrix::updateFrontBuffer() {
     std::memcpy(frontBuffer, backBuffer, 2 * matrixWidth);
 }
+

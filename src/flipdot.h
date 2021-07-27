@@ -16,6 +16,11 @@ void set_value(int x, int y, bool value, int columns, int lines, byte *byte_matr
 
 void fill_random(double density, int m_size, byte *byte_matrix);
 
+enum MatrixBuffer{
+    BACK,
+    FRONT,
+};
+
 class FlipDotMatrix {
 public:
     ///
@@ -39,6 +44,8 @@ public:
     int getHeight();
 
     bool getValue(int x, int y);
+
+    bool getValue(int x, int y, MatrixBuffer buffer);
 
     void setValue(int x, int y, bool value);
 
