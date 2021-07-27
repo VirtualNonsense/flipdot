@@ -64,3 +64,120 @@ void fill_random(double density, int m_size, byte *byte_matrix) {
         }
     }
 }
+// #####################################################################################################################
+// FlipDotMatrix
+// #####################################################################################################################
+bool FlipDotMatrix::getValue(int x, int y) {
+    if (x < 0 && y < 0) {
+        return getValue(matrixWidth + x, matrixHeight + y);
+    }
+    if (x >= matrixWidth && y >= matrixHeight)
+        return getValue(x - matrixWidth, matrixHeight - y);
+    if (x < 0) {
+        return getValue(matrixWidth + x, y);
+    }
+    if (x >= matrixWidth)
+        return getValue(x - matrixWidth, y);
+    if (y < 0) {
+        return getValue(x, matrixHeight + y);
+    }
+    if (y >= matrixHeight)
+        return getValue(x, y - matrixHeight);
+
+
+    if (y < 7) {
+        return (backBuffer[x] >> y) & 0b01;
+    }
+    return (backBuffer[x + matrixWidth] >> (y - 7)) & 0b01;
+}
+
+int FlipDotMatrix::getWidth() {
+    return matrixWidth;
+}
+
+int FlipDotMatrix::getHeight() {
+    return matrixHeight;
+}
+
+void FlipDotMatrix::setValue(int x, int y, bool value) {
+    matrixUpDated = true;
+    if (x < 0 && y < 0) {
+        return setValue(matrixWidth + x, matrixHeight + y, value);
+    }
+    if (x < 0) {
+        return setValue(matrixWidth + x, y, value);
+    }
+    if (y < 0) {
+        return setValue(x, matrixHeight + y, value);
+    }
+    //TODO: find a more general approach....
+    if (y < 7) {
+        if (value)
+            backBuffer[x] = backBuffer[x] | 1 << y;
+        else
+            backBuffer[x] = backBuffer[x] ^ (backBuffer[x] & 1 << y);
+        return;
+    }
+    if (value) {
+        backBuffer[x + matrixWidth] = backBuffer[x + matrixWidth] | 1 << (y - 7);
+        return;
+    }
+    backBuffer[x + matrixWidth] = backBuffer[x + matrixWidth] ^ (backBuffer[x + matrixWidth] & 1 << (y - 7));
+
+}
+
+FlipDotMatrix::FlipDotMatrix(int moduleHeight,
+                             int moduleWidth,
+                             int matrixHeight,
+                             int matrixWidth,
+                             byte *buffer,
+                             byte *backBuffer,
+                             SoftwareSerial *dotMatrix) {
+    this->moduleHeight = moduleHeight;
+    this->moduleWidth = moduleWidth;
+    this->matrixHeight = matrixHeight;
+    this->matrixWidth = matrixWidth;
+    this->frontBuffer = buffer;
+    this->backBuffer = backBuffer;
+    this->dotMatrix = dotMatrix;
+
+}
+
+void FlipDotMatrix::swapBuffer() {
+    std::swap(frontBuffer, backBuffer);
+}
+
+
+
+void FlipDotMatrix::updateMatrix() {
+    if (!matrixUpDated){
+        return;
+    }
+    matrixUpDated = false;
+    Serial.println("swapping buffers");
+    swapBuffer();
+    Serial.println("writing to matrix");
+    dotMatrix->write(data_prefix, 2);
+    dotMatrix->write(panels[0]);
+    for (int i = 0; i < matrixWidth; i++) {
+        dotMatrix->write(frontBuffer[i]);
+    }
+    dotMatrix->write(data_suffix, 1);
+
+    dotMatrix->write(data_prefix, 2);
+    dotMatrix->write(panels[1]);
+    for (int i = matrixWidth; i < 2*matrixWidth; i++) {
+        dotMatrix->write(frontBuffer[i]);
+    }
+    dotMatrix->write(data_suffix, 1);
+    dotMatrix->write(refresh, 3);
+    Serial.println("flushing back buffer");
+    flushBackBuffer();
+}
+
+void FlipDotMatrix::flushBackBuffer() {
+    for (int i = 0; i < 2 * matrixWidth; ++i) {
+        backBuffer[i] = 0;
+    }
+}
+
