@@ -156,7 +156,7 @@ void setup() {
     while (WiFi.waitForConnectResult() != WL_CONNECTED) {
         Serial.println("Connection Failed! Rebooting...");
         delay(5000);
-        ESP.restart();
+        EspClass::restart();
     }
     Serial.println("Wifi setup success!");
     ArduinoOTA.setHostname("Flip-dot-matrix");
