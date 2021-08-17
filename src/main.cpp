@@ -35,16 +35,21 @@ FlipDotMatrix matrix(lines / 2, columns, lines, columns, frontBuffer, backBuffer
 
 rule rule_set = game_of_life;
 
-int MODE_COUNT = 2;
+int MODE_COUNT = 4;
 enum DeviceMode {
     GameOfLife,
-    Clock
+    Clock,
+    Slave,
+    OverTheAirUpdate
 };
 
 DeviceMode mode = GameOfLife;
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
+// TODO: implement
+void listen(){
+}
 
 void website() {
 
@@ -102,6 +107,12 @@ void website() {
             break;
         case Clock:
             mode_string = "Clock";
+            break;
+        case Slave:
+            mode_string = "Slave";
+            break;
+        case OverTheAirUpdate:
+            mode_string = "Over the air update";
             break;
     }
 
@@ -193,16 +204,27 @@ void setup() {
 }
 
 void loop() {
-    ArduinoOTA.handle();
     website();
     switch (mode) {
+        // Game of life demo mode
         case GameOfLife:
             calculate_next_epoch(&matrix, rule_set);
             matrix.swapBuffer();
             matrix.updateMatrix();
             break;
 
+        // Standalone clock
         case Clock:
+            break;
+
+        // Handle remote control
+        case Slave:
+            listen();
+            break;
+
+        // Handle Updates
+        case OverTheAirUpdate:
+            ArduinoOTA.handle();
             break;
     }
     delay(epoch_delay);
