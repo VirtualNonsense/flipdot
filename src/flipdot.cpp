@@ -103,7 +103,8 @@ bool FlipDotMatrix::getValue(int x, int y, MatrixBuffer buffer) {
             }
             return (backBuffer[x + matrixWidth] >> (y - 7)) & 0b01;
     }
-
+    // ugly but necessary
+    return false;
 }
 
 
