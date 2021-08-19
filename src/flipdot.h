@@ -37,22 +37,31 @@ public:
         frontBuffer = nullptr;
     }
 
+    /// returns the with of the entire matrix
     int getWidth();
 
+    /// returns the height of the entire matrix
     int getHeight();
 
+    /// returns the value in a specified place within the back buffer
     bool getValue(int x, int y);
 
+    /// returns the value in a specified place within the given buffer
     bool getValue(int x, int y, MatrixBuffer buffer);
 
+    /// write value to a specific place in back buffer
     void setValue(int x, int y, bool value);
 
+    /// swap front and back buffer references
     void swapBuffer();
 
+    /// copies back buffer to front buffer
     void updateFrontBuffer();
 
+    /// cleanse back buffer
     void flushBackBuffer();
 
+    /// write front buffer to flip dot matrix
     void updateMatrix();
 
 private:
