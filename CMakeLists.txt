@@ -14,20 +14,31 @@ project("flipdot" C CXX)
 
 include(CMakeListsPrivate.txt)
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeListsUser.txt)
-include(CMakeListsUser.txt)
-endif()
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeListsUser.txt)
+    include(CMakeListsUser.txt)
+endif ()
 
 add_custom_target(
-    Production ALL
-    COMMAND platformio -c clion run "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        Production ALL
+        COMMAND platformio -c clion run "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_custom_target(
-    Debug ALL
-    COMMAND platformio -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        Debug ALL
+        COMMAND platformio -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/secrets.h src/game_of_life.h src/game_of_life.cpp src/flipdot.h src/flipdot.cpp)
+add_executable(
+        Z_DUMMY_TARGET
+        ${SRC_LIST}
+        src/secrets.h
+        src/game_of_life.h
+        src/game_of_life.cpp
+        src/flipdot.h
+        src/flipdot.cpp
+        src/pixelfont.h
+        src/octafont-bold.h
+        src/octafont-regular.h
+)
