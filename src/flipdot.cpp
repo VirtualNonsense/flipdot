@@ -127,6 +127,15 @@ void FlipDotMatrix::setValue(int x, int y, bool value) {
     if (y < 0) {
         return setValue(x, matrixHeight + y, value);
     }
+
+    // sloppy way to avoid memory leak. i guess?
+    if (matrixWidth <= x){
+        return;
+    }
+    if (matrixHeight <= y){
+        return;
+    }
+
     //TODO: find a more general approach....
     if (y < 7) {
         if (value)
@@ -198,3 +207,17 @@ void FlipDotMatrix::updateFrontBuffer() {
     std::memcpy(frontBuffer, backBuffer, 2 * matrixWidth);
 }
 
+void FlipDotMatrix::setValues(int x, int y, int width, int height, bool *values) {
+    setValues(x, y, width, height, values, false);
+}
+
+void FlipDotMatrix::setValues(int x, int y, int width, int height, bool *values, bool see_through) {
+    for(int c = 0; c < width; c++){
+        for (int r = 0; r < height; ++r) {
+            // show the former value when new value is false to achieve a transparency effect
+            if(see_through && !values[r*width + c])
+                continue;
+            setValue(x + c, r + y, values[r*width + c]);
+        }
+    }
+}
