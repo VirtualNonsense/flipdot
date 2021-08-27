@@ -83,6 +83,12 @@ void website() {
     if (request.indexOf("/change_mode") != -1) {
         mode = static_cast<DeviceMode>((mode + 1) % MODE_COUNT);
     }
+
+    if (request.indexOf("/clear_matrix") != -1) {
+        matrix.flushBackBuffer();
+        matrix.updateFrontBuffer();
+        matrix.updateMatrix();
+    }
     String game_mode_string;
     switch (rule_set) {
 
@@ -126,6 +132,7 @@ void website() {
     client.println("<!DOCTYPE HTML>");
     client.println("<html>");
     client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
+    client.println("Click <a href=\"/clear_matrix\">here</a> to clear the matrix<br>");
     client.print("Click <a href=\"/change_gol_mode\">here</a> to change the rule set. current mode: ");
     client.print(game_mode_string);
     client.println("<br>");
@@ -211,6 +218,7 @@ void loop() {
             calculate_next_epoch(&matrix, rule_set);
             matrix.swapBuffer();
             matrix.updateMatrix();
+            delay(epoch_delay);
             break;
 
         // Standalone clock
@@ -227,5 +235,4 @@ void loop() {
             ArduinoOTA.handle();
             break;
     }
-    delay(epoch_delay);
 }
