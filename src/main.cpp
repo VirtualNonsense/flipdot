@@ -71,7 +71,7 @@ void website() {
     client.flush();
 
     // Match the request
-    if (request.indexOf("/reset") != -1) {
+    if (request.indexOf("/fill_random") != -1) {
         fill_random(0.2, &matrix);
         matrix.updateFrontBuffer();
     }
@@ -131,7 +131,6 @@ void website() {
     client.println(""); //  do not forget this one
     client.println("<!DOCTYPE HTML>");
     client.println("<html>");
-    client.println("Click <a href=\"/reset\">here</a> to reset the matrix<br>");
     client.println("Click <a href=\"/clear_matrix\">here</a> to clear the matrix<br>");
     client.print("Click <a href=\"/change_gol_mode\">here</a> to change the rule set. current mode: ");
     client.print(game_mode_string);
@@ -139,6 +138,7 @@ void website() {
     client.print("Click <a href=\"/change_mode\">here</a> to change the device mode. current mode: ");
     client.print(mode_string);
     client.println("<br>");
+    client.println("Click <a href=\"/fill_random\">here</a> to fill the matrix with random values<br>");
     client.println("</html>");
 
     delay(1);
