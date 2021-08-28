@@ -117,7 +117,14 @@ int FlipDotMatrix::getHeight() {
 }
 
 void FlipDotMatrix::setValue(int x, int y, bool value) {
+    setValue(x, y, value, false);
+}
+
+void FlipDotMatrix::setValue(int x, int y, bool value, bool see_through) {
     matrixUpDated = true;
+    if(!value && see_through)
+        return;
+
     if (x < 0 && y < 0) {
         return setValue(matrixWidth + x, matrixHeight + y, value);
     }
@@ -215,10 +222,7 @@ void FlipDotMatrix::setValues(int x, int y, int width, int height, bool *values)
 void FlipDotMatrix::setValues(int x, int y, int width, int height, bool *values, bool see_through) {
     for(int c = 0; c < width; c++){
         for (int r = 0; r < height; ++r) {
-            // show the former value when new value is false to achieve a transparency effect
-            if(see_through && !values[r*width + c])
-                continue;
-            setValue(x + c, r + y, values[r*width + c]);
+            setValue(x + c, r + y, values[r*width + c], see_through);
         }
     }
 }

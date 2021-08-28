@@ -52,6 +52,8 @@ public:
     /// write value to a specific place in back buffer
     void setValue(int x, int y, bool value);
 
+    void setValue(int x, int y, bool value, bool see_through);
+
     /// write a matrix to a specified place in back buffer
     void setValues(int x, int y, int width, int height, bool *values);
 
