@@ -38,7 +38,5 @@ add_executable(
         src/game_of_life.cpp
         src/flipdot.h
         src/flipdot.cpp
-        src/pixelfont.h
-        src/octafont-bold.h
-        src/octafont-regular.h
-)
+        src/font.h
+        src/regular_font.h)

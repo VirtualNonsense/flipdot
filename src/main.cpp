@@ -4,6 +4,7 @@
 #include <ArduinoOTA.h>
 #include "secrets.h"
 #include "game_of_life.h"
+#include "regular_font.h"
 
 
 // #####################################################################################################################
@@ -37,18 +38,18 @@ rule rule_set = game_of_life;
 
 int MODE_COUNT = 4;
 enum DeviceMode {
+    OverTheAirUpdate,
     GameOfLife,
     Clock,
     Slave,
-    OverTheAirUpdate
 };
 
-DeviceMode mode = GameOfLife;
+DeviceMode mode = OverTheAirUpdate;
 // #####################################################################################################################
 // Functions
 // #####################################################################################################################
 // TODO: implement
-void listen(){
+void listen() {
 }
 
 void website() {
@@ -73,7 +74,8 @@ void website() {
     // Match the request
     if (request.indexOf("/fill_random") != -1) {
         fill_random(0.2, &matrix);
-        matrix.updateFrontBuffer();
+        matrix.swapBuffer();
+        matrix.updateMatrix();
     }
 
     if (request.indexOf("/change_gol_mode") != -1) {
@@ -150,9 +152,20 @@ void website() {
 // Setup/Loop
 // #####################################################################################################################
 
+int c_x = 0;
+int c_y = 0;
+RegularFont font;
+
+letter tmp{
+        -1,
+        -1,
+        -1,
+};
 void setup() {
     // #################################################################################################################
     // system setup
+    font = RegularFont();
+
     Serial.begin(9600);
     flip_dots.begin(57600);
     Serial.println("setting up wifi!");
@@ -206,10 +219,54 @@ void setup() {
     server.begin();
     // #################################################################################################################
     // Matrix setup
+    Serial.println("Matrix setup");
     pinMode(enableMatrixComPin, OUTPUT);
     digitalWrite(enableMatrixComPin, HIGH);
+//    matrix.setValue(0, 0, true);
+    matrix.flushBackBuffer();
+    matrix.updateFrontBuffer();
+    matrix.updateMatrix();
+    Serial.println("Setup Done!");
 }
 
+void write(int x, int y, letter l) {
+    for (int r = 0; r < l.height; ++r) {
+        for (int c = 0; c < l.width; ++c) {
+            matrix.setValue(x + c, y + r, l.letter[l.start_index + c + r * l.width]);
+        }
+    }
+    matrix.swapBuffer();
+    matrix.flushBackBuffer();
+    matrix.updateMatrix();
+}
+
+const char text[]{
+    '!',
+    '"',
+    '#',
+    '$',
+    '%',
+    '&',
+    '\'',
+    '(',
+    ')',
+    '*',
+    '+',
+    ',',
+    '-',
+    '.',
+    '/',
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+};
 void loop() {
     website();
     switch (mode) {
@@ -221,16 +278,30 @@ void loop() {
             delay(epoch_delay);
             break;
 
-        // Standalone clock
+            // Standalone clock
         case Clock:
+            font.get_letter(text[(c_x + c_y * matrix.getWidth()) % 25], &tmp);
+            Serial.println(tmp.height);
+            Serial.println(tmp.width);
+            Serial.println(tmp.start_index);
+            write(c_x, c_y, tmp);
+            c_x++;
+            if (c_x >= matrix.getWidth()) {
+                c_x = 0;
+                c_y++;
+                if (c_y >= matrix.getHeight()) {
+                    c_y = 0;
+                }
+            }
+            delay(10 * epoch_delay);
             break;
 
-        // Handle remote control
+            // Handle remote control
         case Slave:
             listen();
             break;
 
-        // Handle Updates
+            // Handle Updates
         case OverTheAirUpdate:
             ArduinoOTA.handle();
             break;
