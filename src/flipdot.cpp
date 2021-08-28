@@ -196,7 +196,7 @@ void FlipDotMatrix::updateMatrix() {
 }
 
 void FlipDotMatrix::flushBackBuffer() {
-    // for some reason this is necessary when the matrix wasn't used befor.
+    // for some reason this is necessary when the matrix wasn't used before.
     // TODO: investigate
     setValue(0, 0, false);
     for (int i = 0; i < 2 * matrixWidth; ++i) {
