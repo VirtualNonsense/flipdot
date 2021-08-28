@@ -179,7 +179,6 @@ void FlipDotMatrix::updateMatrix() {
         return;
     }
     matrixUpDated = false;
-    Serial.println("writing to matrix");
     dotMatrix->write(data_prefix, 2);
     dotMatrix->write(panels[0]);
     for (int i = 0; i < matrixWidth; i++) {
@@ -194,7 +193,6 @@ void FlipDotMatrix::updateMatrix() {
     }
     dotMatrix->write(data_suffix, 1);
     dotMatrix->write(refresh, 3);
-    Serial.println("flushing back buffer");
 }
 
 void FlipDotMatrix::flushBackBuffer() {
