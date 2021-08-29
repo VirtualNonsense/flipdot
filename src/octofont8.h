@@ -2,18 +2,18 @@
 // Created by anachtmann on 8/23/21.
 //
 
-#ifndef FLIPDOT_REGULAR_FONT_H
-#define FLIPDOT_REGULAR_FONT_H
+#ifndef FLIPDOT_OCTOFONT8_H
+#define FLIPDOT_OCTOFONT8_H
 
 #include "font.h"
 
-class RegularFont : public PixelFont {
+class OctoFont8 : public PixelFont {
 public:
 
 private:
     static const bool chars[];
     static const int widths[];
-    static const int heights[];
+    static const int height = 8;
     static const int jumps[];
 
     const bool *get_chars() override {
@@ -29,14 +29,14 @@ private:
         return widths;
     }
 
-    const int *get_heights() override {
-        return heights;
+    int get_font_height() override {
+        return height;
     }
 
 };
 #define x true
 #define o false
-const bool RegularFont::chars[] = {
+const bool OctoFont8::chars[] = {
         /*   */
         o, o, o, o,
         o, o, o, o,
@@ -965,7 +965,7 @@ const bool RegularFont::chars[] = {
         o, x, x, o,
         o, o, o, o,
 };
-const int RegularFont::widths[] = {
+const int OctoFont8::widths[] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         4, 1, 3, 6, 5, 9, 5, 1, 3, 3, 5, 5, 2, 3, 1, 5,
@@ -986,7 +986,7 @@ const int RegularFont::widths[] = {
 #undef x
 #undef o
 
-const int RegularFont::jumps[] = {
+const int OctoFont8::jumps[] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         0, 32, 40, 64, 112, 152, 224, 264, 272, 296, 320, 360, 400, 416, 440, 448,
@@ -1005,24 +1005,7 @@ const int RegularFont::jumps[] = {
         -1, -1, -1, -1, -1, -1, 3200, -1, -1, -1, -1, -1, 3232, -1, -1, -1,
 };
 
-const int RegularFont::heights[] = {
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, 8, -1, -1, 8,
-        -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, 8, -1, -1, -1
-};
 
 
-#endif //FLIPDOT_REGULAR_FONT_H
+
+#endif //FLIPDOT_OCTOFONT8_H

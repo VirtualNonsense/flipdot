@@ -4,7 +4,7 @@
 #include <ArduinoOTA.h>
 #include "secrets.h"
 #include "game_of_life.h"
-#include "regular_font.h"
+#include "octofont8.h"
 
 
 // #####################################################################################################################
@@ -154,7 +154,7 @@ void website() {
 
 int c_x = 0;
 int c_y = 0;
-RegularFont font;
+OctoFont8 font;
 
 letter tmp{
         -1,
@@ -164,7 +164,7 @@ letter tmp{
 void setup() {
     // #################################################################################################################
     // system setup
-    font = RegularFont();
+    font = OctoFont8();
 
     Serial.begin(9600);
     flip_dots.begin(57600);

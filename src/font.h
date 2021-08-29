@@ -28,8 +28,8 @@ public:
         return get_widths()[(int) c];
     };
 
-    int get_height(char c) {
-        return get_heights()[(int) c];
+    int get_height() {
+        return get_font_height();
     };
 
     int get_letter(char c, letter *letter) {
@@ -40,7 +40,7 @@ public:
         }
         letter->start_index = get_jumps()[(int) c];
         letter->letter = get_chars();
-        letter->height = get_height(c);
+        letter->height = get_height();
         letter->width = get_width(c);
         return 0;
     }
@@ -75,7 +75,7 @@ private:
 
     virtual const int *get_jumps() = 0;
 
-    virtual const int *get_heights() = 0;
+    virtual int get_font_height() = 0;
 
 };
 

@@ -39,4 +39,4 @@ add_executable(
         src/flipdot.h
         src/flipdot.cpp
         src/font.h
-        src/regular_font.h)
+        src/octofont8.h)
