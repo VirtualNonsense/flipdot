@@ -1,8 +1,8 @@
 //
 // Created by anachtmann on 8/23/21.
 //
-#ifndef FLIPDOT_FONT_H
-#define FLIPDOT_FONT_H
+#ifndef FLIPDOT_PIXELFONT_H
+#define FLIPDOT_PIXELFONT_H
 
 #include <cstdint>
 #include <cstdlib>
@@ -79,4 +79,4 @@ private:
 
 };
 
-#endif //FLIPDOT_FONT_H
+#endif //FLIPDOT_PIXELFONT_H
