@@ -267,6 +267,7 @@ const char text[]{
     '8',
     '9',
 };
+int counter = 0;
 void loop() {
     website();
     switch (mode) {
@@ -280,20 +281,22 @@ void loop() {
 
             // Standalone clock
         case Clock:
-            font.get_letter(text[(c_x + c_y * matrix.getWidth()) % 25], &tmp);
+            font.get_letter(text[counter % sizeof(text)], &tmp);
+            if (c_x + tmp.width - 1 >= matrix.getWidth()) {
+                c_x = 0;
+                c_y += tmp.height;
+                if (c_y >= matrix.getHeight()) {
+                    c_y = 0;
+                    matrix.flushBackBuffer();
+                }
+            }
             Serial.println(tmp.height);
             Serial.println(tmp.width);
             Serial.println(tmp.start_index);
             write(c_x, c_y, tmp);
-            c_x++;
-            if (c_x >= matrix.getWidth()) {
-                c_x = 0;
-                c_y++;
-                if (c_y >= matrix.getHeight()) {
-                    c_y = 0;
-                }
-            }
-            delay(10 * epoch_delay);
+            c_x+=tmp.width + 1;
+            delay(3 * epoch_delay);
+            counter++;
             break;
 
             // Handle remote control
