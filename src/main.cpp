@@ -231,11 +231,11 @@ void setup() {
 void write(int x, int y, letter l) {
     for (int r = 0; r < l.height; ++r) {
         for (int c = 0; c < l.width; ++c) {
-            matrix.setValue(x + c, y + r, l.letter[l.start_index + c + r * l.width]);
+            matrix.setValue(x + c, y + r, l.letter[l.start_index + c + r * l.width], true);
         }
     }
-    matrix.swapBuffer();
-    matrix.flushBackBuffer();
+    matrix.updateFrontBuffer();
+//    matrix.flushBackBuffer();
     matrix.updateMatrix();
 }
 
